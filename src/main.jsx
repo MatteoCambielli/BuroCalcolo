@@ -192,44 +192,128 @@ const officialSources = [
   "Gazzetta Ufficiale"
 ];
 
-const siteUrl = "https://burocalcolo.it";
+const siteUrl = "https://www.burocalcolo.it";
 
 const calculatorSeo = {
   imu: {
     slug: "imu",
-    title: "Calcolo IMU online | BuroCalcolo",
-    description: "Calcola una stima IMU online con rendita catastale, aliquota, quota e mesi di possesso. Report PDF orientativo incluso.",
-    keywords: "calcolo imu, simulatore imu, imu online, rendita catastale, aliquota imu"
+    h1: "Calcolo IMU 2026 online",
+    title: "Calcolo IMU 2026 online gratuito | BuroCalcolo",
+    description: "Calcolo IMU 2026 online con rendita catastale, aliquota comunale, quota e mesi di possesso. Simulatore gratuito con report PDF.",
+    keywords: "calcolo imu 2026, simulatore imu, imu online, calcolo imu seconda casa, rendita catastale, aliquota imu",
+    audience: "proprietari di seconde case, immobili locati, pertinenze e quote di possesso",
+    how: "Inserisci rendita catastale, aliquota del comune, quota di possesso e mesi. Il simulatore rivaluta la rendita e applica il moltiplicatore ordinario per ottenere una stima orientativa dell'imposta.",
+    useful: "E utile per chi vuole capire l'ordine di grandezza del versamento IMU prima di controllare delibere comunali, esenzioni, agevolazioni o particolarita dell'immobile.",
+    example: "Esempio: con rendita catastale di 620 euro, aliquota 1,06%, possesso al 100% per 12 mesi, il calcolatore stima l'imposta annuale e consente di scaricare il riepilogo PDF.",
+    related: ["cedolare", "f24", "inps"],
+    faqs: [
+      ["Come si calcola l'IMU 2026?", "In generale si parte dalla rendita catastale rivalutata, si applica il moltiplicatore previsto e poi l'aliquota comunale. Il risultato puo cambiare in base a comune, categoria catastale, quota e mesi di possesso."],
+      ["Il calcolatore IMU sostituisce il comune?", "No. Il calcolatore fornisce una stima orientativa. Per il versamento reale vanno controllate aliquote, regolamenti e delibere del comune competente."],
+      ["Posso calcolare l'IMU su una seconda casa?", "Si, puoi usare il simulatore per stimare l'IMU su seconde case e immobili diversi dall'abitazione principale, inserendo rendita, aliquota, quota e mesi."],
+      ["La prima casa paga IMU?", "In molti casi l'abitazione principale non di lusso e esclusa dall'IMU, ma esistono eccezioni. Verifica categoria catastale e normativa applicabile."],
+      ["Il report PDF ha valore ufficiale?", "No. Il report PDF e un riepilogo informativo dei dati inseriti e del calcolo stimato, non una certificazione ufficiale."],
+      ["Dove trovo l'aliquota IMU corretta?", "L'aliquota va verificata sulle fonti ufficiali del comune, del MEF o negli strumenti istituzionali disponibili per l'anno di riferimento."]
+    ]
   },
   inps: {
     slug: "inps",
-    title: "Calcolo contributi INPS online | BuroCalcolo",
-    description: "Simula i contributi INPS inserendo reddito imponibile, aliquota e acconti versati. Utile per pianificare cassa e versamenti.",
-    keywords: "calcolo inps, contributi inps, simulatore contributi, gestione separata"
+    h1: "Calcolo INPS gestione separata e contributi",
+    title: "Calcolo INPS gestione separata online | BuroCalcolo",
+    description: "Calcola una stima dei contributi INPS online per gestione separata, professionisti e autonomi inserendo reddito, aliquota e acconti.",
+    keywords: "calcolo inps gestione separata, contributi inps, simulatore contributi, calcolo contributi autonomi, inps online",
+    audience: "freelance, professionisti, partite IVA e lavoratori autonomi che vogliono stimare il carico contributivo",
+    how: "Inserisci reddito imponibile, aliquota contributiva e acconti gia versati. Il simulatore calcola i contributi lordi stimati e sottrae gli acconti per evidenziare il saldo orientativo.",
+    useful: "E utile per pianificare la liquidita, capire l'impatto contributivo del reddito e preparare scenari da confrontare con commercialista, cassa o posizione INPS.",
+    example: "Esempio: con reddito imponibile di 32.000 euro, aliquota 26,07% e acconti per 1.800 euro, il calcolatore stima il saldo contributivo residuo.",
+    related: ["flat", "f24", "payroll"],
+    faqs: [
+      ["Come si calcolano i contributi INPS gestione separata?", "Si applica l'aliquota contributiva al reddito imponibile, tenendo conto di acconti, massimali e regole specifiche dell'anno."],
+      ["Il calcolatore considera minimali e massimali?", "Il simulatore e orientativo e lavora sui dati inseriti. Minimali, massimali e casi particolari devono essere verificati sulle fonti INPS o con un professionista."],
+      ["Serve anche per il regime forfettario?", "Puo aiutare a stimare i contributi, ma nel forfettario bisogna considerare gestione previdenziale, eventuali riduzioni e regole specifiche."],
+      ["Gli acconti INPS vanno sottratti?", "Nel calcolatore puoi inserire gli acconti gia versati per ottenere una stima del saldo residuo."],
+      ["Il risultato e valido per pagare?", "No. Il risultato serve per orientarsi. Prima di versare contributi va verificata la propria posizione con canali ufficiali o consulente."],
+      ["Posso scaricare un report?", "Si, il report PDF riepiloga dati inseriti, dettaglio del calcolo e nota operativa."]
+    ]
   },
   f24: {
     slug: "f24",
-    title: "Calcolo F24 online | BuroCalcolo",
-    description: "Riepiloga tributi, contributi, crediti compensabili, sanzioni e interessi per stimare il saldo di una delega F24.",
-    keywords: "calcolo f24, simulatore f24, delega f24, crediti compensabili"
+    h1: "Calcolo F24 online",
+    title: "Calcolo F24 online con tributi e crediti | BuroCalcolo",
+    description: "Simulatore F24 online per stimare il saldo tra tributi, contributi, crediti compensabili, sanzioni e interessi.",
+    keywords: "calcolo f24, simulatore f24, delega f24, crediti compensabili, tributi f24, saldo f24",
+    audience: "contribuenti, freelance, imprese e consulenti che vogliono riepilogare importi prima della delega",
+    how: "Inserisci tributi, contributi, crediti compensabili, sanzioni e interessi. Il calcolatore somma i debiti, sottrae i crediti e mostra un saldo orientativo della delega.",
+    useful: "E utile quando devi confrontare piu versamenti fiscali o previdenziali e vuoi capire rapidamente l'impatto sulla cassa prima della compilazione ufficiale.",
+    example: "Esempio: inserendo 1.430 euro di tributi, 920 euro di contributi e 350 euro di crediti, il simulatore mostra il saldo netto stimato da considerare nella delega.",
+    related: ["imu", "inps", "flat", "cedolare", "payroll"],
+    faqs: [
+      ["A cosa serve il calcolatore F24?", "Serve a stimare il saldo tra importi a debito e crediti compensabili prima della compilazione ufficiale."],
+      ["Posso inserire crediti in compensazione?", "Si, il campo crediti compensabili riduce il totale stimato, ma la compensazione reale deve rispettare regole, limiti e codici tributo applicabili."],
+      ["Il simulatore genera una delega ufficiale?", "No. Genera una stima e un report informativo, non una delega F24 valida per il pagamento."],
+      ["Include sanzioni e interessi?", "Si, puoi inserirli nel campo dedicato per stimare un saldo piu completo."],
+      ["E utile per IMU, INPS e forfettario?", "Si, puoi usarlo insieme agli altri calcolatori per pianificare versamenti collegati a imposte e contributi."],
+      ["Chi deve verificare il risultato?", "L'utente deve verificare codici, scadenze, compensazioni e importi tramite fonti ufficiali o professionisti abilitati."]
+    ]
   },
   payroll: {
     slug: "busta-paga",
-    title: "Calcolo busta paga e netto mensile | BuroCalcolo",
-    description: "Stima il netto mensile partendo da RAL, mensilita, contributi e aliquota media IRPEF. Report PDF scaricabile.",
-    keywords: "calcolo busta paga, netto mensile, calcolo stipendio netto, ral netto"
+    h1: "Calcolo busta paga netto online",
+    title: "Calcolo busta paga netto e stipendio mensile | BuroCalcolo",
+    description: "Calcola una stima del netto mensile in busta paga partendo da RAL, mensilita, contributi dipendente e aliquota media IRPEF.",
+    keywords: "calcolo busta paga netto, calcolo stipendio netto, ral netto, netto mensile, calcolo tfr online, contributi dipendente",
+    audience: "dipendenti, candidati, aziende e consulenti che vogliono stimare il netto mensile partendo dalla RAL",
+    how: "Inserisci RAL annua, numero di mensilita, contributi dipendente e aliquota media IRPEF. Il simulatore ripartisce il lordo mensile e sottrae contributi e imposte stimate.",
+    useful: "E utile per valutare offerte di lavoro, confrontare RAL diverse, stimare il budget mensile e capire l'effetto di contributi e tassazione sul lordo.",
+    example: "Esempio: con RAL di 34.000 euro su 13 mensilita, contributi 9,19% e aliquota media 24%, il calcolatore stima un netto mensile orientativo.",
+    related: ["inps", "f24", "flat"],
+    faqs: [
+      ["Come si calcola il netto in busta paga?", "Si parte dal lordo mensile e si sottraggono contributi, imposte, addizionali e si considerano detrazioni e altri elementi retributivi."],
+      ["Il calcolatore considera detrazioni e addizionali?", "Il simulatore usa aliquota media e contributi inseriti dall'utente. Detrazioni, addizionali, benefit e conguagli devono essere verificati caso per caso."],
+      ["Posso usare il risultato per accettare un'offerta?", "Puoi usarlo per orientarti, ma prima di decisioni economiche importanti e meglio verificare con prospetto aziendale o consulente paghe."],
+      ["Il calcolo TFR online e incluso?", "Questa pagina intercetta anche esigenze legate a busta paga e TFR, ma il calcolatore attuale stima soprattutto il netto mensile. Il TFR richiede dati specifici su retribuzione utile e periodo lavorato."],
+      ["La RAL va inserita lorda?", "Si, la RAL e la retribuzione annua lorda. Il simulatore la divide per le mensilita indicate."],
+      ["Il PDF e una busta paga ufficiale?", "No. Il PDF e un report informativo e non sostituisce cedolino, CU o documenti ufficiali del datore di lavoro."]
+    ]
   },
   flat: {
     slug: "regime-forfettario",
-    title: "Calcolo regime forfettario online | BuroCalcolo",
-    description: "Calcola una stima dell'imposta sostitutiva nel regime forfettario con ricavi, coefficiente, contributi e aliquota.",
-    keywords: "calcolo forfettario, regime forfettario, imposta sostitutiva, partita iva forfettaria"
+    h1: "Calcolo regime forfettario online",
+    title: "Calcolo regime forfettario e imposta sostitutiva | BuroCalcolo",
+    description: "Calcola online una stima dell'imposta nel regime forfettario con ricavi, coefficiente di redditivita, contributi deducibili e aliquota.",
+    keywords: "calcolo regime forfettario, calcolo forfettario, imposta sostitutiva, partita iva forfettaria, coefficiente redditivita",
+    audience: "partite IVA in regime forfettario, freelance e professionisti che vogliono stimare imposta e margine",
+    how: "Inserisci ricavi, coefficiente di redditivita, imposta sostitutiva e contributi deducibili. Il simulatore stima reddito forfettario, imponibile e imposta dovuta.",
+    useful: "E utile per capire se il fatturato genera sufficiente liquidita, stimare imposta sostitutiva e confrontare scenari prima di acconti o versamenti.",
+    example: "Esempio: con 52.000 euro di ricavi, coefficiente 78%, contributi deducibili per 4.800 euro e aliquota 15%, il calcolatore stima l'imposta sostitutiva.",
+    related: ["inps", "f24", "cedolare"],
+    faqs: [
+      ["Come si calcola il regime forfettario?", "Si applica il coefficiente di redditivita ai ricavi, si deducono eventuali contributi previdenziali e poi si applica l'imposta sostitutiva."],
+      ["Quale aliquota devo usare?", "Le aliquote piu comuni sono 5% o 15%, ma dipendono dai requisiti. Verifica sempre la tua posizione e le regole applicabili."],
+      ["I contributi sono deducibili?", "Nel calcolo puoi inserire contributi deducibili per stimare un imponibile piu vicino al caso reale."],
+      ["Il calcolatore verifica i limiti del forfettario?", "No. Fornisce una stima numerica, ma limiti di accesso, cause ostative e requisiti vanno verificati separatamente."],
+      ["Serve anche il calcolo INPS?", "Si, spesso imposta sostitutiva e contributi INPS vanno valutati insieme per capire il carico complessivo."],
+      ["Il report e valido per la dichiarazione?", "No. Il report e orientativo e non sostituisce dichiarazione fiscale o consulenza professionale."]
+    ]
   },
   cedolare: {
     slug: "cedolare-secca",
-    title: "Calcolo cedolare secca online | BuroCalcolo",
-    description: "Stima la cedolare secca su canone annuo, aliquota e acconti versati per contratti ordinari o agevolati.",
-    keywords: "calcolo cedolare secca, cedolare secca online, affitto cedolare, locazioni"
+    h1: "Calcolo cedolare secca online",
+    title: "Calcolo cedolare secca su affitto | BuroCalcolo",
+    description: "Stima online la cedolare secca su canone annuo, aliquota ordinaria o agevolata e acconti versati. Report PDF orientativo.",
+    keywords: "calcolo cedolare secca, cedolare secca online, affitto cedolare, locazioni, aliquota cedolare secca",
+    audience: "proprietari, locatori e contribuenti che affittano immobili con cedolare secca ordinaria o agevolata",
+    how: "Inserisci canone annuo, aliquota della cedolare e acconto versato. Il simulatore calcola imposta lorda stimata e saldo orientativo.",
+    useful: "E utile per valutare l'impatto fiscale di un contratto di locazione e confrontare scenari tra aliquota ordinaria, agevolata e acconti gia pagati.",
+    example: "Esempio: con canone annuo di 9.600 euro, aliquota 21% e nessun acconto, il calcolatore stima l'imposta dovuta e produce un report PDF.",
+    related: ["imu", "f24", "flat"],
+    faqs: [
+      ["Come si calcola la cedolare secca?", "Si applica l'aliquota prevista al canone annuo e si considerano eventuali acconti gia versati."],
+      ["Quando si usa aliquota 21%?", "L'aliquota 21% e tipica di molti contratti ordinari, ma occorre verificare tipologia contrattuale e regole applicabili."],
+      ["Quando si usa aliquota agevolata?", "L'aliquota agevolata puo riguardare contratti a canone concordato in specifiche condizioni. Verifica sempre requisiti e comune."],
+      ["La cedolare sostituisce altre imposte?", "La cedolare secca puo sostituire IRPEF e addizionali sul reddito da locazione, ma le condizioni vanno verificate."],
+      ["Il calcolo include IMU?", "No. IMU e cedolare secca sono calcoli diversi. Per immobili locati puo essere utile usare anche il calcolatore IMU."],
+      ["Il report PDF e ufficiale?", "No. Il PDF e una stima informativa e non sostituisce dichiarazione o documentazione fiscale."]
+    ]
   }
 };
 
@@ -453,6 +537,39 @@ function setStructuredData(data) {
   script.textContent = JSON.stringify(data);
 }
 
+function buildCalculatorIntro(tool) {
+  return [
+    `${tool.h1} di BuroCalcolo e pensato per chi cerca uno strumento rapido, gratuito e leggibile per ottenere una prima stima online. Molte ricerche fiscali partono da domande pratiche, come quanto si paga, quali dati servono, come leggere un risultato e quando e necessario verificare una fonte ufficiale. Per questo la pagina combina un calcolatore interattivo, un report PDF e contenuti orientativi scritti per aiutare l'utente a comprendere il significato del risultato, senza trasformare la simulazione in consulenza professionale.`,
+    `Il calcolatore ${tool.name} e utile per ${tool.audience}. L'obiettivo non e sostituire commercialista, CAF, consulente del lavoro o amministrazione pubblica, ma ridurre il tempo necessario per costruire uno scenario iniziale. Inserendo pochi dati essenziali puoi ottenere un valore stimato, visualizzare il dettaglio del calcolo e salvare un riepilogo. Questo approccio e particolarmente utile quando vuoi confrontare piu ipotesi, prepararti a una conversazione con un professionista o capire se un importo e coerente con le tue aspettative.`,
+    `Le formule e i parametri fiscali possono cambiare in base all'anno, alla normativa, al comune, alla gestione previdenziale, al contratto o alla situazione personale. Per questo BuroCalcolo affianca al risultato un disclaimer e invita sempre a controllare fonti ufficiali come Agenzia delle Entrate, INPS, MEF, Gazzetta Ufficiale, regolamenti comunali e documentazione applicabile. Usa quindi questo strumento come punto di partenza: il risultato e orientativo, ma puo aiutarti a fare domande migliori, verificare dati mancanti e prendere decisioni piu consapevoli prima di passare ad adempimenti reali.`
+  ];
+}
+
+function buildGeneralFaqs() {
+  return [
+    ["BuroCalcolo e gratuito?", "Si, i calcolatori principali sono pensati per offrire simulazioni informative gratuite e report PDF orientativi."],
+    ["I risultati sono ufficiali?", "No. I risultati sono stime orientative e non sostituiscono documenti ufficiali, dichiarazioni, consulenze o verifiche presso enti competenti."],
+    ["Quali calcolatori fiscali sono disponibili?", "Sono disponibili calcolatori per IMU, INPS, F24, busta paga, regime forfettario e cedolare secca."],
+    ["Posso usare BuroCalcolo da telefono?", "Si, l'interfaccia e responsive e pensata per funzionare su smartphone, tablet e computer."],
+    ["Il report PDF ha valore legale?", "No. Il report PDF serve come riepilogo informativo dei dati inseriti e del risultato stimato."],
+    ["Le leggi sono aggiornate automaticamente?", "Le pagine indicano le fonti da verificare, ma ogni adempimento reale deve essere controllato su fonti ufficiali e con professionisti quando necessario."]
+  ];
+}
+
+function buildFaqJsonLd(faqs) {
+  return {
+    "@type": "FAQPage",
+    mainEntity: faqs.map(([question, answer]) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: answer
+      }
+    }))
+  };
+}
+
 function updateSeo(path, activeTool) {
   const routeTool = getToolFromPath(path);
   const legalPage = legalPages[path];
@@ -471,9 +588,8 @@ function updateSeo(path, activeTool) {
   setMeta("og:url", `${siteUrl}${canonicalPath === "/" ? "" : canonicalPath}`, "property");
   setMeta("twitter:card", "summary_large_image");
   setCanonical(canonicalPath);
-  setStructuredData({
-    "@context": "https://schema.org",
-    "@type": routeTool ? "WebApplication" : "WebSite",
+  const appSchema = {
+    "@type": routeTool ? "SoftwareApplication" : "WebSite",
     name: routeTool ? `${routeTool.name} - BuroCalcolo` : "BuroCalcolo",
     url: `${siteUrl}${canonicalPath === "/" ? "" : canonicalPath}`,
     description,
@@ -484,6 +600,11 @@ function updateSeo(path, activeTool) {
       "@type": "UseAction",
       target: `${siteUrl}${canonicalPath === "/" ? "" : canonicalPath}`
     } : undefined
+  };
+  const faqSchema = routeTool ? buildFaqJsonLd(routeTool.faqs) : path === "/" ? buildFaqJsonLd(buildGeneralFaqs()) : null;
+  setStructuredData({
+    "@context": "https://schema.org",
+    "@graph": faqSchema ? [appSchema, faqSchema] : [appSchema]
   });
 }
 
@@ -502,6 +623,11 @@ function App() {
   const [savedScenarios, setSavedScenarios] = useState([]);
 
   const activeTool = tools.find((tool) => tool.id === activeId);
+  const activeRouteTool = calculatorRoutes.find((tool) => tool.id === activeId);
+  const routeTool = getToolFromPath(currentPath);
+  const isCalculatorPage = Boolean(routeTool);
+  const pageIntro = activeRouteTool ? buildCalculatorIntro(activeRouteTool) : [];
+  const generalFaqs = buildGeneralFaqs();
   const currentValues = values[activeId];
   const result = useMemo(() => activeTool.calculate(currentValues), [activeTool, currentValues]);
   const breakdown = useMemo(() => activeTool.breakdown(currentValues), [activeTool, currentValues]);
@@ -716,10 +842,10 @@ function App() {
               Calcoli fiscali chiari, report pronti e decisioni piu veloci
             </div>
             <h1 className="max-w-4xl text-[clamp(3.15rem,7vw,7.8rem)] font-black leading-[.87] tracking-normal">
-              BuroCalcolo
+              {isCalculatorPage ? activeRouteTool.h1 : "Calcolatori fiscali italiani gratuiti"}
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-ink/72 sm:mt-6 sm:text-lg sm:leading-8 lg:text-xl">
-              La suite fiscale italiana per stimare imposte, contributi e scenari di cassa in pochi secondi. Inserisci i dati, confronta il risultato e scarica un report PDF ordinato da condividere o archiviare.
+              {isCalculatorPage ? activeRouteTool.description : "BuroCalcolo raccoglie calcolatori fiscali italiani gratuiti per stimare IMU, INPS, F24, busta paga netto, regime forfettario e cedolare secca. Inserisci i dati, confronta il risultato e scarica un report PDF orientativo."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#calcolatori" className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 font-bold text-white shadow-panel">
@@ -805,6 +931,9 @@ function App() {
               <p className="text-sm font-bold uppercase tracking-[.16em] text-butter">Risultato stimato</p>
               <p className="mt-2 text-[clamp(2.5rem,8vw,5.6rem)] font-black leading-none tracking-normal">{formatEuro(result)}</p>
               <p className="mt-4 max-w-2xl text-white/68">{activeTool.note}</p>
+              <p className="mt-3 max-w-2xl rounded-2xl bg-white/10 p-3 text-sm leading-6 text-white/70">
+                Disclaimer: il risultato e una stima orientativa basata sui dati inseriti. Prima di usare il dato per pagamenti, dichiarazioni o decisioni operative verifica fonti ufficiali e posizione personale.
+              </p>
             </div>
             <div className="grid content-end gap-2">
               <button onClick={downloadReport} className="rounded-full bg-butter px-5 py-3 font-black text-ink">Genera report</button>
@@ -824,10 +953,15 @@ function App() {
           </div>
 
           <article className="mt-5 rounded-[1.25rem] border border-ink/10 bg-paper p-5">
-            <h2 className="text-2xl font-black">Come usare il calcolatore {activeTool.name}</h2>
-            <p className="mt-3 leading-7 text-ink/68">
-              Inserisci i dati richiesti, controlla il risultato stimato e scarica il report PDF. Questo strumento e pensato per una prima valutazione orientativa: per pagamenti, dichiarazioni o pratiche ufficiali verifica sempre aliquote, scadenze e fonti istituzionali.
-            </p>
+            <h2 className="text-2xl font-black">{isCalculatorPage ? `Guida al ${activeRouteTool.h1}` : "Perche usare BuroCalcolo"}</h2>
+            <div className="mt-3 grid gap-3 leading-7 text-ink/68">
+              {isCalculatorPage ? pageIntro.map((paragraph) => <p key={paragraph}>{paragraph}</p>) : (
+                <>
+                  <p>BuroCalcolo aiuta a trasformare dubbi fiscali frequenti in simulazioni leggibili. Invece di partire da fogli sparsi, formule difficili o ricerche frammentate, puoi selezionare il calcolatore piu adatto, inserire pochi dati e ottenere un risultato stimato con report PDF.</p>
+                  <p>Il sito e pensato per intercettare ricerche pratiche come calcolo IMU 2026, calcolo INPS gestione separata, calcolo F24, calcolo busta paga netto, calcolo regime forfettario e calcolo cedolare secca. Ogni strumento mantiene una pagina dedicata, cosi puoi salvarla, condividerla e ritrovarla facilmente.</p>
+                </>
+              )}
+            </div>
             <div className="mt-4 flex flex-wrap gap-2">
               {calculatorRoutes.map((tool) => (
                 <a key={tool.id} href={tool.path} className="rounded-full border border-ink/15 bg-white px-3 py-2 text-sm font-bold text-ink/65">
@@ -836,6 +970,16 @@ function App() {
               ))}
             </div>
           </article>
+
+          {isCalculatorPage && (
+            <section className="mt-5 grid gap-4">
+              <SeoPanel title="Come funziona" text={activeRouteTool.how} />
+              <SeoPanel title="A chi e utile" text={activeRouteTool.useful} />
+              <SeoPanel title="Esempio pratico" text={activeRouteTool.example} />
+              <RelatedCalculators current={activeRouteTool} />
+              <FaqSection faqs={activeRouteTool.faqs} title={`FAQ sul ${activeRouteTool.h1}`} />
+            </section>
+          )}
         </div>
 
         <aside className="grid gap-4">
@@ -910,7 +1054,7 @@ function App() {
               <ShieldCheck size={19} />
             </div>
             <div>
-              <h2 className="text-3xl font-black tracking-normal">Area professionale</h2>
+              <h2 className="text-3xl font-black tracking-normal">Perche usare BuroCalcolo</h2>
               <p className="text-sm text-ink/60">Strumenti essenziali per lavorare su simulazioni fiscali in modo ordinato.</p>
             </div>
           </div>
@@ -982,6 +1126,11 @@ function App() {
           </div>
         </div>
       </section>
+      {!isCalculatorPage && (
+        <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-5 lg:px-8">
+          <FaqSection faqs={generalFaqs} title="FAQ sui calcolatori fiscali italiani" />
+        </section>
+      )}
       <SiteFooter />
       <CookieBanner />
     </main>
@@ -997,6 +1146,50 @@ function Metric({ icon: Icon, label, value }) {
       </div>
       <p className="mt-2 text-3xl font-black">{value}</p>
     </div>
+  );
+}
+
+function SeoPanel({ title, text }) {
+  return (
+    <article className="rounded-[1.25rem] border border-ink/10 bg-white p-5 shadow-panel">
+      <h2 className="text-2xl font-black">{title}</h2>
+      <p className="mt-3 leading-7 text-ink/68">{text}</p>
+    </article>
+  );
+}
+
+function RelatedCalculators({ current }) {
+  const related = current.related.map((id) => calculatorRoutes.find((tool) => tool.id === id)).filter(Boolean);
+  return (
+    <article className="rounded-[1.25rem] border border-ink/10 bg-white p-5 shadow-panel">
+      <h2 className="text-2xl font-black">Calcolatori correlati</h2>
+      <p className="mt-3 leading-7 text-ink/68">
+        Approfondisci scenari collegati usando altri strumenti di BuroCalcolo. I link interni aiutano a confrontare imposte, contributi e versamenti senza uscire dal sito.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {related.map((tool) => (
+          <a key={tool.id} href={tool.path} className="rounded-full bg-ink px-4 py-2 text-sm font-black text-white">
+            {tool.name}
+          </a>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function FaqSection({ faqs, title }) {
+  return (
+    <section className="rounded-[1.5rem] border border-ink/10 bg-white p-5 shadow-panel">
+      <h2 className="text-3xl font-black tracking-normal">{title}</h2>
+      <div className="mt-5 grid gap-3">
+        {faqs.map(([question, answer]) => (
+          <details key={question} className="rounded-2xl bg-paper p-4">
+            <summary className="cursor-pointer font-black">{question}</summary>
+            <p className="mt-3 leading-7 text-ink/68">{answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   );
 }
 
