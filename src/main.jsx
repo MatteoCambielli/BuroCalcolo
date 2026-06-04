@@ -1,14 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Bot,
   Building2,
   Calculator,
-  CalendarCheck,
-  CheckCircle2,
   ChevronRight,
   CircleDollarSign,
-  ClipboardCheck,
   Download,
   FileSpreadsheet,
   FileText,
@@ -18,7 +15,6 @@ import {
   MessageSquareText,
   RefreshCw,
   Scale,
-  ShieldCheck,
   Sparkles,
   WalletCards,
   Zap
@@ -179,12 +175,6 @@ const updates = [
   ["Cedolare", "Locazioni ordinarie e agevolate", "Alert aliquote"]
 ];
 
-const professionalItems = [
-  ["Report immediato", "Riepilogo scaricabile con dati inseriti, risultato, dettaglio del calcolo e nota operativa."],
-  ["Scenari a confronto", "Salva simulazioni nella sessione per valutare alternative, acconti e impatto sulla liquidita."],
-  ["Controlli normativi", "Schede organizzate per modulo con aree da verificare prima di usare il dato per adempimenti reali."]
-];
-
 const officialSources = [
   "Agenzia delle Entrate",
   "INPS",
@@ -193,6 +183,7 @@ const officialSources = [
 ];
 
 const siteUrl = "https://www.burocalcolo.it";
+const gaMeasurementId = "G-JH40MFQ8JQ";
 
 const calculatorSeo = {
   imu: {
@@ -203,15 +194,15 @@ const calculatorSeo = {
     keywords: "calcolo imu 2026, simulatore imu, imu online, calcolo imu seconda casa, rendita catastale, aliquota imu",
     audience: "proprietari di seconde case, immobili locati, pertinenze e quote di possesso",
     how: "Inserisci rendita catastale, aliquota del comune, quota di possesso e mesi. Il simulatore rivaluta la rendita e applica il moltiplicatore ordinario per ottenere una stima orientativa dell'imposta.",
-    useful: "E utile per chi vuole capire l'ordine di grandezza del versamento IMU prima di controllare delibere comunali, esenzioni, agevolazioni o particolarita dell'immobile.",
+    useful: "È utile per chi vuole capire l'ordine di grandezza del versamento IMU prima di controllare delibere comunali, esenzioni, agevolazioni o particolarita dell'immobile.",
     example: "Esempio: con rendita catastale di 620 euro, aliquota 1,06%, possesso al 100% per 12 mesi, il calcolatore stima l'imposta annuale e consente di scaricare il riepilogo PDF.",
     related: ["cedolare", "f24", "inps"],
     faqs: [
-      ["Come si calcola l'IMU 2026?", "In generale si parte dalla rendita catastale rivalutata, si applica il moltiplicatore previsto e poi l'aliquota comunale. Il risultato puo cambiare in base a comune, categoria catastale, quota e mesi di possesso."],
+      ["Come si calcola l'IMU 2026?", "In generale si parte dalla rendita catastale rivalutata, si applica il moltiplicatore previsto e poi l'aliquota comunale. Il risultato può cambiare in base a comune, categoria catastale, quota e mesi di possesso."],
       ["Il calcolatore IMU sostituisce il comune?", "No. Il calcolatore fornisce una stima orientativa. Per il versamento reale vanno controllate aliquote, regolamenti e delibere del comune competente."],
-      ["Posso calcolare l'IMU su una seconda casa?", "Si, puoi usare il simulatore per stimare l'IMU su seconde case e immobili diversi dall'abitazione principale, inserendo rendita, aliquota, quota e mesi."],
-      ["La prima casa paga IMU?", "In molti casi l'abitazione principale non di lusso e esclusa dall'IMU, ma esistono eccezioni. Verifica categoria catastale e normativa applicabile."],
-      ["Il report PDF ha valore ufficiale?", "No. Il report PDF e un riepilogo informativo dei dati inseriti e del calcolo stimato, non una certificazione ufficiale."],
+      ["Posso calcolare l'IMU su una seconda casa?", "Sì, puoi usare il simulatore per stimare l'IMU su seconde case e immobili diversi dall'abitazione principale, inserendo rendita, aliquota, quota e mesi."],
+      ["La prima casa paga IMU?", "In molti casi l'abitazione principale non di lusso è esclusa dall'IMU, ma esistono eccezioni. Verifica categoria catastale e normativa applicabile."],
+      ["Il report PDF ha valore ufficiale?", "No. Il report PDF è un riepilogo informativo dei dati inseriti e del calcolo stimato, non una certificazione ufficiale."],
       ["Dove trovo l'aliquota IMU corretta?", "L'aliquota va verificata sulle fonti ufficiali del comune, del MEF o negli strumenti istituzionali disponibili per l'anno di riferimento."]
     ]
   },
@@ -223,16 +214,16 @@ const calculatorSeo = {
     keywords: "calcolo inps gestione separata, contributi inps, simulatore contributi, calcolo contributi autonomi, inps online",
     audience: "freelance, professionisti, partite IVA e lavoratori autonomi che vogliono stimare il carico contributivo",
     how: "Inserisci reddito imponibile, aliquota contributiva e acconti gia versati. Il simulatore calcola i contributi lordi stimati e sottrae gli acconti per evidenziare il saldo orientativo.",
-    useful: "E utile per pianificare la liquidita, capire l'impatto contributivo del reddito e preparare scenari da confrontare con commercialista, cassa o posizione INPS.",
+    useful: "È utile per pianificare la liquidita, capire l'impatto contributivo del reddito e preparare scenari da confrontare con commercialista, cassa o posizione INPS.",
     example: "Esempio: con reddito imponibile di 32.000 euro, aliquota 26,07% e acconti per 1.800 euro, il calcolatore stima il saldo contributivo residuo.",
     related: ["flat", "f24", "payroll"],
     faqs: [
       ["Come si calcolano i contributi INPS gestione separata?", "Si applica l'aliquota contributiva al reddito imponibile, tenendo conto di acconti, massimali e regole specifiche dell'anno."],
-      ["Il calcolatore considera minimali e massimali?", "Il simulatore e orientativo e lavora sui dati inseriti. Minimali, massimali e casi particolari devono essere verificati sulle fonti INPS o con un professionista."],
-      ["Serve anche per il regime forfettario?", "Puo aiutare a stimare i contributi, ma nel forfettario bisogna considerare gestione previdenziale, eventuali riduzioni e regole specifiche."],
+      ["Il calcolatore considera minimali e massimali?", "Il simulatore è orientativo e lavora sui dati inseriti. Minimali, massimali e casi particolari devono essere verificati sulle fonti INPS o con un professionista."],
+      ["Serve anche per il regime forfettario?", "Può aiutare a stimare i contributi, ma nel forfettario bisogna considerare gestione previdenziale, eventuali riduzioni e regole specifiche."],
       ["Gli acconti INPS vanno sottratti?", "Nel calcolatore puoi inserire gli acconti gia versati per ottenere una stima del saldo residuo."],
-      ["Il risultato e valido per pagare?", "No. Il risultato serve per orientarsi. Prima di versare contributi va verificata la propria posizione con canali ufficiali o consulente."],
-      ["Posso scaricare un report?", "Si, il report PDF riepiloga dati inseriti, dettaglio del calcolo e nota operativa."]
+      ["Il risultato è valido per pagare?", "No. Il risultato serve per orientarsi. Prima di versare contributi va verificata la propria posizione con canali ufficiali o consulente."],
+      ["Posso scaricare un report?", "Sì, il report PDF riepiloga dati inseriti, dettaglio del calcolo e nota operativa."]
     ]
   },
   f24: {
@@ -243,15 +234,15 @@ const calculatorSeo = {
     keywords: "calcolo f24, simulatore f24, delega f24, crediti compensabili, tributi f24, saldo f24",
     audience: "contribuenti, freelance, imprese e consulenti che vogliono riepilogare importi prima della delega",
     how: "Inserisci tributi, contributi, crediti compensabili, sanzioni e interessi. Il calcolatore somma i debiti, sottrae i crediti e mostra un saldo orientativo della delega.",
-    useful: "E utile quando devi confrontare piu versamenti fiscali o previdenziali e vuoi capire rapidamente l'impatto sulla cassa prima della compilazione ufficiale.",
+    useful: "È utile quando devi confrontare più versamenti fiscali o previdenziali e vuoi capire rapidamente l'impatto sulla cassa prima della compilazione ufficiale.",
     example: "Esempio: inserendo 1.430 euro di tributi, 920 euro di contributi e 350 euro di crediti, il simulatore mostra il saldo netto stimato da considerare nella delega.",
     related: ["imu", "inps", "flat", "cedolare", "payroll"],
     faqs: [
       ["A cosa serve il calcolatore F24?", "Serve a stimare il saldo tra importi a debito e crediti compensabili prima della compilazione ufficiale."],
-      ["Posso inserire crediti in compensazione?", "Si, il campo crediti compensabili riduce il totale stimato, ma la compensazione reale deve rispettare regole, limiti e codici tributo applicabili."],
+      ["Posso inserire crediti in compensazione?", "Sì, il campo crediti compensabili riduce il totale stimato, ma la compensazione reale deve rispettare regole, limiti e codici tributo applicabili."],
       ["Il simulatore genera una delega ufficiale?", "No. Genera una stima e un report informativo, non una delega F24 valida per il pagamento."],
-      ["Include sanzioni e interessi?", "Si, puoi inserirli nel campo dedicato per stimare un saldo piu completo."],
-      ["E utile per IMU, INPS e forfettario?", "Si, puoi usarlo insieme agli altri calcolatori per pianificare versamenti collegati a imposte e contributi."],
+      ["Include sanzioni e interessi?", "Sì, puoi inserirli nel campo dedicato per stimare un saldo più completo."],
+      ["È utile per IMU, INPS e forfettario?", "Sì, puoi usarlo insieme agli altri calcolatori per pianificare versamenti collegati a imposte e contributi."],
       ["Chi deve verificare il risultato?", "L'utente deve verificare codici, scadenze, compensazioni e importi tramite fonti ufficiali o professionisti abilitati."]
     ]
   },
@@ -263,16 +254,16 @@ const calculatorSeo = {
     keywords: "calcolo busta paga netto, calcolo stipendio netto, ral netto, netto mensile, calcolo tfr online, contributi dipendente",
     audience: "dipendenti, candidati, aziende e consulenti che vogliono stimare il netto mensile partendo dalla RAL",
     how: "Inserisci RAL annua, numero di mensilita, contributi dipendente e aliquota media IRPEF. Il simulatore ripartisce il lordo mensile e sottrae contributi e imposte stimate.",
-    useful: "E utile per valutare offerte di lavoro, confrontare RAL diverse, stimare il budget mensile e capire l'effetto di contributi e tassazione sul lordo.",
+    useful: "È utile per valutare offerte di lavoro, confrontare RAL diverse, stimare il budget mensile e capire l'effetto di contributi e tassazione sul lordo.",
     example: "Esempio: con RAL di 34.000 euro su 13 mensilita, contributi 9,19% e aliquota media 24%, il calcolatore stima un netto mensile orientativo.",
     related: ["inps", "f24", "flat"],
     faqs: [
       ["Come si calcola il netto in busta paga?", "Si parte dal lordo mensile e si sottraggono contributi, imposte, addizionali e si considerano detrazioni e altri elementi retributivi."],
       ["Il calcolatore considera detrazioni e addizionali?", "Il simulatore usa aliquota media e contributi inseriti dall'utente. Detrazioni, addizionali, benefit e conguagli devono essere verificati caso per caso."],
       ["Posso usare il risultato per accettare un'offerta?", "Puoi usarlo per orientarti, ma prima di decisioni economiche importanti e meglio verificare con prospetto aziendale o consulente paghe."],
-      ["Il calcolo TFR online e incluso?", "Questa pagina intercetta anche esigenze legate a busta paga e TFR, ma il calcolatore attuale stima soprattutto il netto mensile. Il TFR richiede dati specifici su retribuzione utile e periodo lavorato."],
-      ["La RAL va inserita lorda?", "Si, la RAL e la retribuzione annua lorda. Il simulatore la divide per le mensilita indicate."],
-      ["Il PDF e una busta paga ufficiale?", "No. Il PDF e un report informativo e non sostituisce cedolino, CU o documenti ufficiali del datore di lavoro."]
+      ["Il calcolo TFR online è incluso?", "Questa pagina intercetta anche esigenze legate a busta paga e TFR, ma il calcolatore attuale stima soprattutto il netto mensile. Il TFR richiede dati specifici su retribuzione utile e periodo lavorato."],
+      ["La RAL va inserita lorda?", "Sì, la RAL è la retribuzione annua lorda. Il simulatore la divide per le mensilita indicate."],
+      ["Il PDF è una busta paga ufficiale?", "No. Il PDF è un report informativo e non sostituisce cedolino, CU o documenti ufficiali del datore di lavoro."]
     ]
   },
   flat: {
@@ -283,16 +274,16 @@ const calculatorSeo = {
     keywords: "calcolo regime forfettario, calcolo forfettario, imposta sostitutiva, partita iva forfettaria, coefficiente redditivita",
     audience: "partite IVA in regime forfettario, freelance e professionisti che vogliono stimare imposta e margine",
     how: "Inserisci ricavi, coefficiente di redditivita, imposta sostitutiva e contributi deducibili. Il simulatore stima reddito forfettario, imponibile e imposta dovuta.",
-    useful: "E utile per capire se il fatturato genera sufficiente liquidita, stimare imposta sostitutiva e confrontare scenari prima di acconti o versamenti.",
+    useful: "È utile per capire se il fatturato genera sufficiente liquidita, stimare imposta sostitutiva e confrontare scenari prima di acconti o versamenti.",
     example: "Esempio: con 52.000 euro di ricavi, coefficiente 78%, contributi deducibili per 4.800 euro e aliquota 15%, il calcolatore stima l'imposta sostitutiva.",
     related: ["inps", "f24", "cedolare"],
     faqs: [
       ["Come si calcola il regime forfettario?", "Si applica il coefficiente di redditivita ai ricavi, si deducono eventuali contributi previdenziali e poi si applica l'imposta sostitutiva."],
-      ["Quale aliquota devo usare?", "Le aliquote piu comuni sono 5% o 15%, ma dipendono dai requisiti. Verifica sempre la tua posizione e le regole applicabili."],
-      ["I contributi sono deducibili?", "Nel calcolo puoi inserire contributi deducibili per stimare un imponibile piu vicino al caso reale."],
+      ["Quale aliquota devo usare?", "Le aliquote più comuni sono 5% o 15%, ma dipendono dai requisiti. Verifica sempre la tua posizione e le regole applicabili."],
+      ["I contributi sono deducibili?", "Nel calcolo puoi inserire contributi deducibili per stimare un imponibile più vicino al caso reale."],
       ["Il calcolatore verifica i limiti del forfettario?", "No. Fornisce una stima numerica, ma limiti di accesso, cause ostative e requisiti vanno verificati separatamente."],
-      ["Serve anche il calcolo INPS?", "Si, spesso imposta sostitutiva e contributi INPS vanno valutati insieme per capire il carico complessivo."],
-      ["Il report e valido per la dichiarazione?", "No. Il report e orientativo e non sostituisce dichiarazione fiscale o consulenza professionale."]
+      ["Serve anche il calcolo INPS?", "Sì, spesso imposta sostitutiva e contributi INPS vanno valutati insieme per capire il carico complessivo."],
+      ["Il report è valido per la dichiarazione?", "No. Il report è orientativo e non sostituisce dichiarazione fiscale o consulenza professionale."]
     ]
   },
   cedolare: {
@@ -303,16 +294,16 @@ const calculatorSeo = {
     keywords: "calcolo cedolare secca, cedolare secca online, affitto cedolare, locazioni, aliquota cedolare secca",
     audience: "proprietari, locatori e contribuenti che affittano immobili con cedolare secca ordinaria o agevolata",
     how: "Inserisci canone annuo, aliquota della cedolare e acconto versato. Il simulatore calcola imposta lorda stimata e saldo orientativo.",
-    useful: "E utile per valutare l'impatto fiscale di un contratto di locazione e confrontare scenari tra aliquota ordinaria, agevolata e acconti gia pagati.",
+    useful: "È utile per valutare l'impatto fiscale di un contratto di locazione e confrontare scenari tra aliquota ordinaria, agevolata e acconti gia pagati.",
     example: "Esempio: con canone annuo di 9.600 euro, aliquota 21% e nessun acconto, il calcolatore stima l'imposta dovuta e produce un report PDF.",
     related: ["imu", "f24", "flat"],
     faqs: [
       ["Come si calcola la cedolare secca?", "Si applica l'aliquota prevista al canone annuo e si considerano eventuali acconti gia versati."],
-      ["Quando si usa aliquota 21%?", "L'aliquota 21% e tipica di molti contratti ordinari, ma occorre verificare tipologia contrattuale e regole applicabili."],
-      ["Quando si usa aliquota agevolata?", "L'aliquota agevolata puo riguardare contratti a canone concordato in specifiche condizioni. Verifica sempre requisiti e comune."],
-      ["La cedolare sostituisce altre imposte?", "La cedolare secca puo sostituire IRPEF e addizionali sul reddito da locazione, ma le condizioni vanno verificate."],
-      ["Il calcolo include IMU?", "No. IMU e cedolare secca sono calcoli diversi. Per immobili locati puo essere utile usare anche il calcolatore IMU."],
-      ["Il report PDF e ufficiale?", "No. Il PDF e una stima informativa e non sostituisce dichiarazione o documentazione fiscale."]
+      ["Quando si usa aliquota 21%?", "L'aliquota 21% è tipica di molti contratti ordinari, ma occorre verificare tipologia contrattuale e regole applicabili."],
+      ["Quando si usa aliquota agevolata?", "L'aliquota agevolata può riguardare contratti a canone concordato in specifiche condizioni. Verifica sempre requisiti e comune."],
+      ["La cedolare sostituisce altre imposte?", "La cedolare secca può sostituire IRPEF e addizionali sul reddito da locazione, ma le condizioni vanno verificate."],
+      ["Il calcolo include IMU?", "No. IMU e cedolare secca sono calcoli diversi. Per immobili locati può essere utile usare anche il calcolatore IMU."],
+      ["Il report PDF è ufficiale?", "No. Il PDF è una stima informativa e non sostituisce dichiarazione o documentazione fiscale."]
     ]
   }
 };
@@ -354,16 +345,16 @@ const legalPages = {
       ["2. Dati raccolti", "Durante la navigazione e l'utilizzo del sito possono essere raccolti dati di navigazione, come indirizzo IP, data e ora della richiesta, browser, sistema operativo, tipo di dispositivo, pagine visitate e informazioni diagnostiche e di sicurezza. Possono inoltre essere trattati dati forniti volontariamente tramite calcolatori, moduli di contatto, report, assistente AI ed eventuali funzionalita future."],
       ["3. Finalita del trattamento", "I dati personali possono essere trattati per fornire i servizi richiesti, eseguire simulazioni e calcoli, generare report e risultati personalizzati, rispondere alle richieste di assistenza, garantire il corretto funzionamento del sito, prevenire utilizzi fraudolenti o dannosi, migliorare qualita, prestazioni e sicurezza del servizio, e adempiere ad obblighi di legge."],
       ["4. Base giuridica del trattamento", "Il trattamento viene effettuato sulla base dell'esecuzione di una richiesta dell'utente, del consenso quando richiesto, del legittimo interesse del titolare alla sicurezza e al miglioramento del servizio, oppure dell'adempimento di obblighi legali."],
-      ["5. Assistente AI", "BuroCalcolo puo utilizzare tecnologie di Intelligenza Artificiale fornite da soggetti terzi per elaborare richieste e generare risposte automatiche. I dati inseriti volontariamente nell'assistente AI possono essere trasmessi ai fornitori tecnologici strettamente necessari all'elaborazione. Gli utenti sono invitati a non inserire dati sanitari, informazioni particolarmente sensibili, dati bancari, credenziali di accesso o dati personali di terzi senza autorizzazione."],
+      ["5. Assistente AI", "BuroCalcolo può utilizzare tecnologie di Intelligenza Artificiale fornite da soggetti terzi per elaborare richieste e generare risposte automatiche. I dati inseriti volontariamente nell'assistente AI possono essere trasmessi ai fornitori tecnologici strettamente necessari all'elaborazione. Gli utenti sono invitati a non inserire dati sanitari, informazioni particolarmente sensibili, dati bancari, credenziali di accesso o dati personali di terzi senza autorizzazione."],
       ["6. Cookie e tecnologie analoghe", "BuroCalcolo utilizza cookie tecnici necessari al funzionamento del sito. Qualora vengano utilizzati cookie statistici, pubblicitari o di profilazione, questi saranno attivati esclusivamente nel rispetto della normativa applicabile e, ove richiesto, previo consenso dell'utente. Le informazioni dettagliate sono disponibili nella Cookie Policy."],
       ["7. Servizi di terze parti", "Per il funzionamento del sito possono essere utilizzati fornitori esterni quali servizi di hosting, CDN, strumenti di analisi statistica, servizi pubblicitari, fornitori di Intelligenza Artificiale e strumenti di monitoraggio e sicurezza. Tali soggetti possono trattare dati personali in qualita di autonomi titolari o responsabili del trattamento secondo le rispettive informative privacy."],
       ["8. Google AdSense e pubblicita", "BuroCalcolo potra mostrare annunci pubblicitari forniti da Google AdSense o da altri circuiti pubblicitari. Tali servizi potrebbero utilizzare cookie, identificatori online e tecnologie simili per mostrare annunci personalizzati o misurare le prestazioni pubblicitarie. L'attivazione avverra nel rispetto della normativa vigente e delle preferenze espresse dall'utente tramite il banner di consenso."],
       ["9. Conservazione dei dati", "I dati personali vengono conservati esclusivamente per il tempo necessario al raggiungimento delle finalita per cui sono stati raccolti. I dati tecnici possono essere conservati per sicurezza e manutenzione; le richieste inviate tramite moduli di contatto possono essere conservate fino a 24 mesi; i dati inseriti nei calcolatori vengono normalmente elaborati per fornire il risultato richiesto e non vengono conservati oltre il necessario."],
       ["10. Trasferimento dei dati all'estero", "Alcuni fornitori utilizzati dal sito potrebbero trattare dati personali in Paesi situati al di fuori dello Spazio Economico Europeo. In tali casi il trasferimento avviene nel rispetto delle garanzie previste dal Regolamento UE 2016/679 e dalle ulteriori normative applicabili."],
-      ["11. Sicurezza", "BuroCalcolo adotta misure tecniche e organizzative ragionevoli volte a proteggere i dati personali da accessi non autorizzati, perdita, divulgazione, alterazione o utilizzo improprio. Tuttavia nessun sistema informatico puo garantire una sicurezza assoluta."],
-      ["12. Diritti dell'interessato", "L'utente puo esercitare i diritti previsti dagli articoli 15-22 del GDPR, tra cui accesso, rettifica, cancellazione, limitazione del trattamento, opposizione, portabilita dei dati e revoca del consenso prestato. Le richieste possono essere inviate a privacy@burocalcolo.it. L'utente ha inoltre diritto di proporre reclamo al Garante per la Protezione dei Dati Personali."],
+      ["11. Sicurezza", "BuroCalcolo adotta misure tecniche e organizzative ragionevoli volte a proteggere i dati personali da accessi non autorizzati, perdita, divulgazione, alterazione o utilizzo improprio. Tuttavia nessun sistema informatico può garantire una sicurezza assoluta."],
+      ["12. Diritti dell'interessato", "L'utente può esercitare i diritti previsti dagli articoli 15-22 del GDPR, tra cui accesso, rettifica, cancellazione, limitazione del trattamento, opposizione, portabilita dei dati e revoca del consenso prestato. Le richieste possono essere inviate a privacy@burocalcolo.it. L'utente ha inoltre diritto di proporre reclamo al Garante per la Protezione dei Dati Personali."],
       ["13. Disclaimer", "I risultati forniti dai calcolatori, simulatori e strumenti presenti su BuroCalcolo hanno finalita esclusivamente informative e orientative. Le informazioni generate non costituiscono consulenza fiscale, tributaria, contabile, previdenziale, finanziaria o legale. Per decisioni aventi effetti economici, fiscali o giuridici e sempre opportuno rivolgersi a professionisti qualificati. BuroCalcolo non garantisce la completezza, l'aggiornamento o l'assenza di errori nei risultati generati dai calcolatori e declina ogni responsabilità per eventuali decisioni prese sulla base delle informazioni fornite."],
-      ["14. Modifiche alla presente informativa", "La presente Privacy Policy puo essere aggiornata in qualsiasi momento per adeguarsi a modifiche normative, tecniche o organizzative. La versione piu recente sara sempre disponibile su questa pagina."]
+      ["14. Modifiche alla presente informativa", "La presente Privacy Policy può essere aggiornata in qualsiasi momento per adeguarsi a modifiche normative, tecniche o organizzative. La versione più recente sara sempre disponibile su questa pagina."]
     ]
   },
   "/cookie-policy": {
@@ -373,26 +364,26 @@ const legalPages = {
     sections: [
       ["Cosa sono i cookie", "I cookie sono piccoli file di testo che vengono memorizzati sul dispositivo dell'utente durante la navigazione di un sito web. I cookie consentono di migliorare l'esperienza di navigazione, garantire il corretto funzionamento del sito, raccogliere statistiche anonime e, ove previsto, mostrare contenuti e annunci personalizzati."],
       ["Cookie tecnici", "BuroCalcolo utilizza cookie tecnici strettamente necessari al funzionamento del sito. Questi cookie permettono la corretta navigazione delle pagine, la gestione della sicurezza, il mantenimento delle preferenze dell'utente e il corretto funzionamento dei servizi richiesti. Poiche necessari al funzionamento del sito, tali cookie non richiedono il consenso preventivo dell'utente."],
-      ["Cookie statistici", "BuroCalcolo puo utilizzare strumenti di analisi statistica per comprendere come gli utenti utilizzano il sito e migliorarne le prestazioni. Qualora tali strumenti raccolgano dati personali o utilizzino cookie non anonimizzati, il loro utilizzo avverra esclusivamente previo consenso dell'utente, ove richiesto dalla normativa applicabile."],
-      ["Cookie pubblicitari", "BuroCalcolo puo utilizzare servizi pubblicitari forniti da terze parti, inclusi Google AdSense e piattaforme equivalenti. Tali servizi possono utilizzare cookie, identificatori online e tecnologie analoghe per misurare l'efficacia degli annunci, prevenire attivita fraudolente, limitare la ripetizione degli annunci, personalizzare i contenuti pubblicitari e fornire statistiche aggregate agli inserzionisti. L'utilizzo di cookie pubblicitari e di profilazione avverra solo previo consenso dell'utente quando richiesto dalla normativa vigente."],
+      ["Cookie statistici", "BuroCalcolo può utilizzare strumenti di analisi statistica per comprendere come gli utenti utilizzano il sito e migliorarne le prestazioni. Qualora tali strumenti raccolgano dati personali o utilizzino cookie non anonimizzati, il loro utilizzo avverra esclusivamente previo consenso dell'utente, ove richiesto dalla normativa applicabile."],
+      ["Cookie pubblicitari", "BuroCalcolo può utilizzare servizi pubblicitari forniti da terze parti, inclusi Google AdSense e piattaforme equivalenti. Tali servizi possono utilizzare cookie, identificatori online e tecnologie analoghe per misurare l'efficacia degli annunci, prevenire attivita fraudolente, limitare la ripetizione degli annunci, personalizzare i contenuti pubblicitari e fornire statistiche aggregate agli inserzionisti. L'utilizzo di cookie pubblicitari e di profilazione avverra solo previo consenso dell'utente quando richiesto dalla normativa vigente."],
       ["Gestione del consenso", "Gli utenti residenti nello Spazio Economico Europeo, nel Regno Unito o in Svizzera possono esprimere, modificare o revocare le proprie preferenze relative ai cookie tramite il banner di consenso presente sul sito. Le preferenze espresse possono essere aggiornate in qualsiasi momento."],
-      ["Gestione dei cookie tramite browser", "L'utente puo controllare, limitare o eliminare i cookie direttamente tramite le impostazioni del proprio browser. La disabilitazione di alcuni cookie potrebbe influire sul corretto funzionamento di determinate funzionalita del sito."],
-      ["Modifiche alla Cookie Policy", "La presente Cookie Policy puo essere aggiornata in qualsiasi momento per adeguarsi a modifiche normative, tecniche o organizzative. La versione piu recente sara sempre disponibile su questa pagina."]
+      ["Gestione dei cookie tramite browser", "L'utente può controllare, limitare o eliminare i cookie direttamente tramite le impostazioni del proprio browser. La disabilitazione di alcuni cookie potrebbe influire sul corretto funzionamento di determinate funzionalita del sito."],
+      ["Modifiche alla Cookie Policy", "La presente Cookie Policy può essere aggiornata in qualsiasi momento per adeguarsi a modifiche normative, tecniche o organizzative. La versione più recente sara sempre disponibile su questa pagina."]
     ]
   },
   "/termini-e-condizioni": {
     eyebrow: "Regole d'uso",
     title: "Termini e condizioni",
-    intro: "L'accesso e l'utilizzo del sito BuroCalcolo implicano l'accettazione integrale dei presenti Termini e Condizioni. Qualora l'utente non accetti una o piu disposizioni, e invitato a interrompere l'utilizzo del sito.",
+    intro: "L'accesso e l'utilizzo del sito BuroCalcolo implicano l'accettazione integrale dei presenti Termini e Condizioni. Qualora l'utente non accetti una o più disposizioni, e invitato a interrompere l'utilizzo del sito.",
     sections: [
       ["1. Natura del servizio", "BuroCalcolo mette a disposizione strumenti informativi, simulatori, calcolatori, report e contenuti destinati a fornire stime e indicazioni orientative in ambito fiscale, previdenziale, economico e amministrativo. I servizi offerti non costituiscono consulenza fiscale, tributaria, contabile, finanziaria o legale e non sostituiscono il parere di professionisti qualificati, enti pubblici, CAF, commercialisti, consulenti del lavoro, avvocati o altre figure abilitate. BuroCalcolo è gestito da Matteo Cambielli, che agisce in qualità di titolare del sito e dei servizi offerti."],
       ["2. Utilizzo del sito", "L'utente si impegna a utilizzare il sito in modo lecito, corretto e conforme alla normativa vigente. E vietato utilizzare il servizio per compromettere la sicurezza del sito, tentare accessi non autorizzati, introdurre malware o codice dannoso, interferire con il corretto funzionamento della piattaforma o utilizzare strumenti automatici per sovraccaricare il servizio."],
       ["3. Accuratezza dei risultati", "I risultati generati dai calcolatori e dai simulatori dipendono esclusivamente dai dati inseriti dall'utente e dalle regole implementate nel sistema. Sebbene venga prestata la massima attenzione all'aggiornamento delle formule e dei parametri utilizzati, BuroCalcolo non garantisce la completezza, l'accuratezza o l'aggiornamento costante dei risultati. Normative, aliquote, regolamenti locali e situazioni personali specifiche possono influire significativamente sui risultati effettivi."],
       ["4. Report e documenti generati", "I report e i documenti generati tramite il sito hanno esclusivamente finalita informative. Essi non costituiscono documentazione ufficiale ne possono essere utilizzati come certificazione, attestazione o prova nei confronti di enti pubblici o soggetti terzi."],
-      ["5. Assistente AI", "BuroCalcolo puo utilizzare sistemi di Intelligenza Artificiale per fornire supporto agli utenti. Le risposte generate dall'assistente AI sono automatiche e possono contenere errori, omissioni, interpretazioni non corrette o informazioni non aggiornate. L'utente e tenuto a verificare autonomamente ogni informazione ottenuta tramite l'assistente prima di assumere decisioni economiche, fiscali, amministrative o legali."],
+      ["5. Assistente AI", "BuroCalcolo può utilizzare sistemi di Intelligenza Artificiale per fornire supporto agli utenti. Le risposte generate dall'assistente AI sono automatiche e possono contenere errori, omissioni, interpretazioni non corrette o informazioni non aggiornate. L'utente e tenuto a verificare autonomamente ogni informazione ottenuta tramite l'assistente prima di assumere decisioni economiche, fiscali, amministrative o legali."],
       ["6. Limitazione di responsabilita", "Nei limiti consentiti dalla legge, il titolare del sito non potra essere ritenuto responsabile per errori o omissioni nei contenuti, interruzioni del servizio, indisponibilita temporanea del sito, perdite economiche dirette o indirette, decisioni prese dall'utente sulla base delle informazioni fornite, o danni derivanti dall'utilizzo o dall'impossibilita di utilizzo del servizio. L'utilizzo del sito avviene sotto la responsabilita esclusiva dell'utente."],
       ["7. Proprieta intellettuale", "Salvo diversa indicazione, contenuti, testi, loghi, marchi, elementi grafici, codice e funzionalita presenti su BuroCalcolo sono protetti dalla normativa applicabile in materia di proprieta intellettuale. Non e consentita la copia, riproduzione, distribuzione o modifica dei contenuti senza preventiva autorizzazione del titolare."],
-      ["8. Disponibilita del servizio", "BuroCalcolo si impegna a mantenere il servizio disponibile e aggiornato, ma non garantisce la continuita operativa ininterrotta. Il sito puo essere sospeso temporaneamente per manutenzione, aggiornamenti tecnici o cause indipendenti dalla volonta del titolare."],
+      ["8. Disponibilita del servizio", "BuroCalcolo si impegna a mantenere il servizio disponibile e aggiornato, ma non garantisce la continuita operativa ininterrotta. Il sito può essere sospeso temporaneamente per manutenzione, aggiornamenti tecnici o cause indipendenti dalla volonta del titolare."],
       ["9. Modifiche ai Termini", "BuroCalcolo si riserva il diritto di modificare in qualsiasi momento i presenti Termini e Condizioni. Le modifiche entreranno in vigore dalla data di pubblicazione sul sito."],
       ["10. Legge applicabile", "I presenti Termini e Condizioni sono regolati dalla legge italiana. Per quanto non espressamente previsto, si applicano le disposizioni della normativa italiana ed europea vigente."],
       ["11. Contatti", "Per qualsiasi informazione relativa ai presenti Termini e Condizioni e possibile contattare privacy@burocalcolo.it."],
@@ -405,9 +396,9 @@ const legalPages = {
     intro: "BuroCalcolo e uno strumento informativo progettato per fornire simulazioni, stime, calcoli e contenuti orientativi in materia fiscale, previdenziale, economica e amministrativa. Prima di utilizzare risultati, report o risposte generate dal sito per adempimenti reali, e necessario verificare attentamente i dati inseriti, la normativa applicabile e le fonti ufficiali di riferimento.",
     sections: [
       ["Nessuna consulenza professionale", "I contenuti presenti su BuroCalcolo non costituiscono consulenza fiscale, tributaria, contabile, previdenziale, finanziaria, legale o del lavoro. L'utilizzo del sito non instaura alcun rapporto professionale tra l'utente e il titolare del servizio. Per decisioni operative, dichiarazioni fiscali, pratiche amministrative o scelte con conseguenze economiche e giuridiche e opportuno rivolgersi a professionisti qualificati o agli enti competenti."],
-      ["Accuratezza delle informazioni", "BuroCalcolo si impegna a mantenere formule, parametri e contenuti il piu possibile aggiornati. Tuttavia non viene fornita alcuna garanzia circa completezza delle informazioni, assenza di errori, aggiornamento costante dei dati o applicabilita dei risultati a casi specifici. Normative, aliquote, regolamenti locali, interpretazioni amministrative e situazioni personali possono variare nel tempo e incidere sui risultati ottenuti."],
+      ["Accuratezza delle informazioni", "BuroCalcolo si impegna a mantenere formule, parametri e contenuti il più possibile aggiornati. Tuttavia non viene fornita alcuna garanzia circa completezza delle informazioni, assenza di errori, aggiornamento costante dei dati o applicabilita dei risultati a casi specifici. Normative, aliquote, regolamenti locali, interpretazioni amministrative e situazioni personali possono variare nel tempo e incidere sui risultati ottenuti."],
       ["Simulazioni e risultati", "I risultati generati dai calcolatori dipendono esclusivamente dai dati inseriti dall'utente e dalle regole implementate nel sistema. I valori restituiti devono essere considerati esclusivamente stime orientative e non rappresentano certificazioni, attestazioni o documenti ufficiali."],
-      ["Assistente AI", "BuroCalcolo puo utilizzare sistemi di Intelligenza Artificiale per fornire supporto informativo agli utenti. Le risposte generate automaticamente possono contenere errori, omissioni, informazioni non aggiornate o interpretazioni non corrette. Le informazioni fornite dall'assistente AI devono essere sempre verificate mediante fonti ufficiali o professionisti qualificati prima di essere utilizzate per prendere decisioni fiscali, economiche, amministrative o legali."],
+      ["Assistente AI", "BuroCalcolo può utilizzare sistemi di Intelligenza Artificiale per fornire supporto informativo agli utenti. Le risposte generate automaticamente possono contenere errori, omissioni, informazioni non aggiornate o interpretazioni non corrette. Le informazioni fornite dall'assistente AI devono essere sempre verificate mediante fonti ufficiali o professionisti qualificati prima di essere utilizzate per prendere decisioni fiscali, economiche, amministrative o legali."],
       ["Responsabilita dell'utente", "L'utente resta l'unico responsabile dei dati inseriti nel sito, della verifica delle informazioni ottenute, del controllo delle fonti ufficiali e delle decisioni assunte sulla base dei risultati forniti."],
       ["Limitazione di responsabilita", "Nei limiti consentiti dalla legge, il titolare di BuroCalcolo non potra essere ritenuto responsabile per danni diretti o indiretti, perdite economiche, errori di calcolo, ritardi, omissioni o decisioni adottate dall'utente sulla base delle informazioni, simulazioni o risposte generate dal sito."],
       ["Fonti ufficiali", "Per adempimenti fiscali, previdenziali e amministrativi fanno sempre fede le fonti ufficiali competenti, tra cui Agenzia delle Entrate, INPS, Ministero dell'Economia e delle Finanze, Gazzetta Ufficiale della Repubblica Italiana, regolamenti comunali applicabili e altra documentazione normativa ufficiale."]
@@ -537,20 +528,84 @@ function setStructuredData(data) {
   script.textContent = JSON.stringify(data);
 }
 
+function getCookieConsent() {
+  try {
+    const saved = window.localStorage.getItem("burocalcolo-cookie-consent");
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
+function hasAnalyticsConsent() {
+  return Boolean(getCookieConsent()?.statistics);
+}
+
+function initGoogleAnalytics() {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  if (!window.__burocalcoloGaInitialized) {
+    window.gtag("consent", "default", {
+      analytics_storage: hasAnalyticsConsent() ? "granted" : "denied",
+      ad_storage: getCookieConsent()?.marketing ? "granted" : "denied",
+      ad_user_data: getCookieConsent()?.marketing ? "granted" : "denied",
+      ad_personalization: getCookieConsent()?.marketing ? "granted" : "denied"
+    });
+    window.gtag("js", new Date());
+    window.gtag("config", gaMeasurementId, { send_page_view: false });
+    window.__burocalcoloGaInitialized = true;
+  }
+
+  if (!document.querySelector(`script[data-burocalcolo-ga="${gaMeasurementId}"]`)) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`;
+    script.dataset.burocalcoloGa = gaMeasurementId;
+    document.head.appendChild(script);
+  }
+}
+
+function updateGoogleConsent() {
+  if (!window.gtag) return;
+  const consent = getCookieConsent();
+  window.gtag("consent", "update", {
+    analytics_storage: consent?.statistics ? "granted" : "denied",
+    ad_storage: consent?.marketing ? "granted" : "denied",
+    ad_user_data: consent?.marketing ? "granted" : "denied",
+    ad_personalization: consent?.marketing ? "granted" : "denied"
+  });
+}
+
+function trackPageView(path) {
+  initGoogleAnalytics();
+  updateGoogleConsent();
+  if (!hasAnalyticsConsent()) return;
+
+  const url = `${siteUrl}${path === "/" ? "" : path}`;
+  window.gtag("event", "page_view", {
+    page_title: document.title,
+    page_location: url,
+    page_path: path
+  });
+}
+
 function buildCalculatorIntro(tool) {
   return [
-    `${tool.h1} di BuroCalcolo e pensato per chi cerca uno strumento rapido, gratuito e leggibile per ottenere una prima stima online. Molte ricerche fiscali partono da domande pratiche, come quanto si paga, quali dati servono, come leggere un risultato e quando e necessario verificare una fonte ufficiale. Per questo la pagina combina un calcolatore interattivo, un report PDF e contenuti orientativi scritti per aiutare l'utente a comprendere il significato del risultato, senza trasformare la simulazione in consulenza professionale.`,
-    `Il calcolatore ${tool.name} e utile per ${tool.audience}. L'obiettivo non e sostituire commercialista, CAF, consulente del lavoro o amministrazione pubblica, ma ridurre il tempo necessario per costruire uno scenario iniziale. Inserendo pochi dati essenziali puoi ottenere un valore stimato, visualizzare il dettaglio del calcolo e salvare un riepilogo. Questo approccio e particolarmente utile quando vuoi confrontare piu ipotesi, prepararti a una conversazione con un professionista o capire se un importo e coerente con le tue aspettative.`,
-    `Le formule e i parametri fiscali possono cambiare in base all'anno, alla normativa, al comune, alla gestione previdenziale, al contratto o alla situazione personale. Per questo BuroCalcolo affianca al risultato un disclaimer e invita sempre a controllare fonti ufficiali come Agenzia delle Entrate, INPS, MEF, Gazzetta Ufficiale, regolamenti comunali e documentazione applicabile. Usa quindi questo strumento come punto di partenza: il risultato e orientativo, ma puo aiutarti a fare domande migliori, verificare dati mancanti e prendere decisioni piu consapevoli prima di passare ad adempimenti reali.`
+    `${tool.h1} di BuroCalcolo è pensato per chi cerca uno strumento rapido, gratuito e leggibile per ottenere una prima stima online. Molte ricerche fiscali partono da domande pratiche, come quanto si paga, quali dati servono, come leggere un risultato e quando è necessario verificare una fonte ufficiale. Per questo la pagina combina un calcolatore interattivo, un report PDF e contenuti orientativi scritti per aiutare l'utente a comprendere il significato del risultato, senza trasformare la simulazione in consulenza professionale.`,
+    `Il calcolatore ${tool.name} è utile per ${tool.audience}. L'obiettivo non è sostituire commercialista, CAF, consulente del lavoro o amministrazione pubblica, ma ridurre il tempo necessario per costruire uno scenario iniziale. Inserendo pochi dati essenziali puoi ottenere un valore stimato, visualizzare il dettaglio del calcolo e salvare un riepilogo. Questo approccio è particolarmente utile quando vuoi confrontare più ipotesi, prepararti a una conversazione con un professionista o capire se un importo è coerente con le tue aspettative.`,
+    `Le formule e i parametri fiscali possono cambiare in base all'anno, alla normativa, al comune, alla gestione previdenziale, al contratto o alla situazione personale. Per questo BuroCalcolo affianca al risultato un disclaimer e invita sempre a controllare fonti ufficiali come Agenzia delle Entrate, INPS, MEF, Gazzetta Ufficiale, regolamenti comunali e documentazione applicabile. Usa quindi questo strumento come punto di partenza: il risultato è orientativo, ma può aiutarti a fare domande migliori, verificare dati mancanti e prendere decisioni più consapevoli prima di passare ad adempimenti reali.`
   ];
 }
 
 function buildGeneralFaqs() {
   return [
-    ["BuroCalcolo e gratuito?", "Si, i calcolatori principali sono pensati per offrire simulazioni informative gratuite e report PDF orientativi."],
+    ["BuroCalcolo è gratuito?", "Sì, i calcolatori principali sono pensati per offrire simulazioni informative gratuite e report PDF orientativi."],
     ["I risultati sono ufficiali?", "No. I risultati sono stime orientative e non sostituiscono documenti ufficiali, dichiarazioni, consulenze o verifiche presso enti competenti."],
     ["Quali calcolatori fiscali sono disponibili?", "Sono disponibili calcolatori per IMU, INPS, F24, busta paga, regime forfettario e cedolare secca."],
-    ["Posso usare BuroCalcolo da telefono?", "Si, l'interfaccia e responsive e pensata per funzionare su smartphone, tablet e computer."],
+    ["Posso usare BuroCalcolo da telefono?", "Sì, l'interfaccia è responsive e pensata per funzionare su smartphone, tablet e computer."],
     ["Il report PDF ha valore legale?", "No. Il report PDF serve come riepilogo informativo dei dati inseriti e del risultato stimato."],
     ["Le leggi sono aggiornate automaticamente?", "Le pagine indicano le fonti da verificare, ma ogni adempimento reale deve essere controllato su fonti ufficiali e con professionisti quando necessario."]
   ];
@@ -621,6 +676,7 @@ function App() {
   const [draft, setDraft] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [savedScenarios, setSavedScenarios] = useState([]);
+  const lastTrackedPath = useRef("");
 
   const activeTool = tools.find((tool) => tool.id === activeId);
   const activeRouteTool = calculatorRoutes.find((tool) => tool.id === activeId);
@@ -647,6 +703,26 @@ function App() {
   useEffect(() => {
     updateSeo(currentPath, activeTool);
   }, [activeTool, currentPath]);
+
+  useEffect(() => {
+    initGoogleAnalytics();
+    const onConsentChanged = () => {
+      updateGoogleConsent();
+      if (lastTrackedPath.current) {
+        lastTrackedPath.current = "";
+        trackPageView(currentPath);
+        lastTrackedPath.current = currentPath;
+      }
+    };
+    window.addEventListener("burocalcolo-cookie-consent-changed", onConsentChanged);
+    return () => window.removeEventListener("burocalcolo-cookie-consent-changed", onConsentChanged);
+  }, [currentPath]);
+
+  useEffect(() => {
+    if (lastTrackedPath.current === currentPath) return;
+    trackPageView(currentPath);
+    lastTrackedPath.current = currentPath;
+  }, [currentPath]);
 
   const handleInput = (key, value) => {
     setValues((current) => ({
@@ -839,7 +915,7 @@ function App() {
           <div className="flex flex-col justify-center pb-4">
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-2 text-sm font-bold shadow-insetGlow">
               <Sparkles size={16} className="text-tomato" />
-              Calcoli fiscali chiari, report pronti e decisioni piu veloci
+              Calcoli fiscali chiari, report pronti e decisioni più veloci
             </div>
             <h1 className="max-w-4xl text-[clamp(3.15rem,7vw,7.8rem)] font-black leading-[.87] tracking-normal">
               {isCalculatorPage ? activeRouteTool.h1 : "Calcolatori fiscali italiani gratuiti"}
@@ -888,11 +964,6 @@ function App() {
             </div>
           </div>
 
-          <div className="col-span-full grid gap-3 pb-4 sm:grid-cols-3 sm:gap-4">
-            <Metric icon={ClipboardCheck} label="Moduli fiscali" value="6" />
-            <Metric icon={FileText} label="Report PDF" value="1 click" />
-            <Metric icon={ShieldCheck} label="Esperienza clienti" value="Pro" />
-          </div>
         </div>
       </section>
 
@@ -952,29 +1023,28 @@ function App() {
             ))}
           </div>
 
-          <article className="mt-5 rounded-[1.25rem] border border-ink/10 bg-paper p-5">
-            <h2 className="text-2xl font-black">{isCalculatorPage ? `Guida al ${activeRouteTool.h1}` : "Perche usare BuroCalcolo"}</h2>
-            <div className="mt-3 grid gap-3 leading-7 text-ink/68">
-              {isCalculatorPage ? pageIntro.map((paragraph) => <p key={paragraph}>{paragraph}</p>) : (
-                <>
-                  <p>BuroCalcolo aiuta a trasformare dubbi fiscali frequenti in simulazioni leggibili. Invece di partire da fogli sparsi, formule difficili o ricerche frammentate, puoi selezionare il calcolatore piu adatto, inserire pochi dati e ottenere un risultato stimato con report PDF.</p>
-                  <p>Il sito e pensato per intercettare ricerche pratiche come calcolo IMU 2026, calcolo INPS gestione separata, calcolo F24, calcolo busta paga netto, calcolo regime forfettario e calcolo cedolare secca. Ogni strumento mantiene una pagina dedicata, cosi puoi salvarla, condividerla e ritrovarla facilmente.</p>
-                </>
-              )}
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {calculatorRoutes.map((tool) => (
-                <a key={tool.id} href={tool.path} className="rounded-full border border-ink/15 bg-white px-3 py-2 text-sm font-bold text-ink/65">
-                  {tool.name}
-                </a>
-              ))}
-            </div>
-          </article>
+          {isCalculatorPage ? (
+            <article className="mt-5 rounded-[1.25rem] border border-ink/10 bg-paper p-5">
+              <h2 className="text-2xl font-black">{`Guida al ${activeRouteTool.h1}`}</h2>
+              <div className="mt-3 grid gap-3 leading-7 text-ink/68">
+                {pageIntro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {calculatorRoutes.map((tool) => (
+                  <a key={tool.id} href={tool.path} className="rounded-full border border-ink/15 bg-white px-3 py-2 text-sm font-bold text-ink/65">
+                    {tool.name}
+                  </a>
+                ))}
+              </div>
+            </article>
+          ) : (
+            <AdPlacement />
+          )}
 
           {isCalculatorPage && (
             <section className="mt-5 grid gap-4">
               <SeoPanel title="Come funziona" text={activeRouteTool.how} />
-              <SeoPanel title="A chi e utile" text={activeRouteTool.useful} />
+              <SeoPanel title="A chi è utile" text={activeRouteTool.useful} />
               <SeoPanel title="Esempio pratico" text={activeRouteTool.example} />
               <RelatedCalculators current={activeRouteTool} />
               <FaqSection faqs={activeRouteTool.faqs} title={`FAQ sul ${activeRouteTool.h1}`} />
@@ -1047,49 +1117,7 @@ function App() {
         </aside>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-5 lg:grid-cols-[.85fr_1.15fr] lg:px-8 lg:pb-12">
-        <div className="rounded-[1.5rem] border border-ink/10 bg-white p-5 shadow-panel">
-          <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-full bg-butter text-ink">
-              <ShieldCheck size={19} />
-            </div>
-            <div>
-              <h2 className="text-3xl font-black tracking-normal">Perche usare BuroCalcolo</h2>
-              <p className="text-sm text-ink/60">Strumenti essenziali per lavorare su simulazioni fiscali in modo ordinato.</p>
-            </div>
-          </div>
-          <div className="mt-5 grid gap-3">
-            {professionalItems.map(([title, text]) => (
-              <div key={title} className="rounded-2xl bg-paper p-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={18} className="text-basil" />
-                  <b>{title}</b>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-ink/66">{text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 rounded-2xl bg-ink p-4 text-white">
-            <div className="flex items-center gap-2">
-              <CalendarCheck size={18} className="text-butter" />
-              <b>Scenario salvato</b>
-            </div>
-            {savedScenarios.length === 0 ? (
-              <p className="mt-2 text-sm leading-6 text-white/62">Salva un calcolo per vederlo qui e confrontarlo con le prossime simulazioni.</p>
-            ) : (
-              <div className="mt-3 grid gap-2">
-                {savedScenarios.map((scenario) => (
-                  <div key={scenario.id} className="flex items-center justify-between gap-3 rounded-xl bg-white/10 px-3 py-2 text-sm">
-                    <span>{scenario.module}</span>
-                    <b>{formatEuro(scenario.result)}</b>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-10 sm:px-5 lg:px-8 lg:pb-12">
         <div className="rounded-[1.5rem] border border-ink/10 bg-ink p-4 text-white shadow-panel">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -1209,7 +1237,7 @@ function SiteFooter() {
             Strumenti informativi a scopo orientativo.
           </p>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <p className="text-sm font-black uppercase tracking-[.14em] text-butter">Calcolatori</p>
             <div className="mt-3 grid gap-2 text-sm text-white/70">
@@ -1235,16 +1263,34 @@ function SiteFooter() {
               <a href="/disclaimer">Disclaimer</a>
             </div>
           </div>
-          <div>
-            <p className="text-sm font-black uppercase tracking-[.14em] text-butter">Indicazioni</p>
-            <p className="mt-3 text-sm leading-6 text-white/62">
-              Prima di attivare annunci, configura privacy, cookie banner/CMP e consenso per utenti europei secondo i servizi effettivamente installati.
-            </p>
-          </div>
         </div>
       </div>
     </footer>
   );
+}
+
+function AdPlacement() {
+  return (
+    <aside className="mt-5 rounded-[1.25rem] border border-dashed border-ink/20 bg-white p-5 text-center shadow-panel" aria-label="Spazio pubblicitario">
+      <p className="text-xs font-black uppercase tracking-[.14em] text-ink/45">Annuncio</p>
+      <div className="mt-3 grid min-h-28 place-items-center rounded-2xl bg-paper px-4 py-6">
+        <p className="max-w-md text-sm leading-6 text-ink/52">Spazio riservato a contenuti pubblicitari pertinenti.</p>
+      </div>
+    </aside>
+  );
+}
+
+function VercelSpeedInsights() {
+  useEffect(() => {
+    if (document.querySelector('script[data-burocalcolo-speed-insights="true"]')) return;
+    const script = document.createElement("script");
+    script.defer = true;
+    script.dataset.burocalcoloSpeedInsights = "true";
+    script.src = "/_vercel/speed-insights/script.js";
+    document.head.appendChild(script);
+  }, []);
+
+  return null;
 }
 
 function LegalShell({ children }) {
@@ -1315,6 +1361,7 @@ function CookieBanner() {
     setPreferences(payload);
     setChoice("saved");
     setShowPreferences(false);
+    window.dispatchEvent(new CustomEvent("burocalcolo-cookie-consent-changed", { detail: payload }));
   };
 
   const rejectAll = () => saveChoice({ statistics: false, marketing: false });
@@ -1499,4 +1546,9 @@ function ContactPage() {
   );
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(
+  <>
+    <App />
+    <VercelSpeedInsights />
+  </>
+);
