@@ -19,6 +19,7 @@ import {
   WalletCards,
   Zap
 } from "lucide-react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./styles.css";
 
 const today = new Intl.DateTimeFormat("it-IT", {
@@ -1549,6 +1550,6 @@ function ContactPage() {
 createRoot(document.getElementById("root")).render(
   <>
     <App />
-    <VercelSpeedInsights />
+    <SpeedInsights />
   </>
 );
