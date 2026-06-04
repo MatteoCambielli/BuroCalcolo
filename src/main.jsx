@@ -20,6 +20,7 @@ import {
   Zap
 } from "lucide-react";
 import "./styles.css";
+import { getGuideByPath, getRelatedGuides, guides, officialSourceLinks } from "./guideContent";
 
 const today = new Intl.DateTimeFormat("it-IT", {
   day: "2-digit",
@@ -625,24 +626,42 @@ function buildFaqJsonLd(faqs) {
   };
 }
 
+function buildBreadcrumbJsonLd(items) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${siteUrl}${item.path === "/" ? "" : item.path}`
+    }))
+  };
+}
+
 function updateSeo(path, activeTool) {
   const routeTool = getToolFromPath(path);
+  const routeGuide = getGuideByPath(path);
+  const isGuideIndex = path === "/guide";
   const legalPage = legalPages[path];
   const contactPage = path === "/contatti";
-  const title = routeTool?.title || (legalPage ? `${legalPage.title} | BuroCalcolo` : contactPage ? "Contatti | BuroCalcolo" : "BuroCalcolo | Calcolo fiscale italiano con AI");
-  const description = routeTool?.description || legalPage?.intro || (contactPage ? "Contatta BuroCalcolo per informazioni sui calcolatori fiscali, report PDF e pagine informative." : "Simulatori fiscali italiani per IMU, INPS, F24, busta paga, regime forfettario e cedolare secca con report PDF e assistente AI.");
-  const keywords = routeTool?.keywords || "calcolo fiscale, imu, inps, f24, busta paga, forfettario, cedolare secca";
-  const canonicalPath = routeTool?.path || path;
+  const title = routeGuide?.metaTitle || (isGuideIndex ? "Guide fiscali italiane 2026 | BuroCalcolo" : routeTool?.title || (legalPage ? `${legalPage.title} | BuroCalcolo` : contactPage ? "Contatti | BuroCalcolo" : "BuroCalcolo | Calcolo fiscale italiano con AI"));
+  const description = routeGuide?.metaDescription || (isGuideIndex ? "Guide fiscali e previdenziali italiane aggiornate: regime forfettario, IMU, INPS, TFR, busta paga, cedolare secca, F24 e detrazioni." : routeTool?.description || legalPage?.intro || (contactPage ? "Contatta BuroCalcolo per informazioni sui calcolatori fiscali, report PDF e pagine informative." : "Simulatori fiscali italiani per IMU, INPS, F24, busta paga, regime forfettario e cedolare secca con report PDF e assistente AI."));
+  const keywords = routeGuide?.keywords || (isGuideIndex ? "guide fiscali, guide inps, guide imu, regime forfettario, busta paga, f24, cedolare secca" : routeTool?.keywords || "calcolo fiscale, imu, inps, f24, busta paga, forfettario, cedolare secca");
+  const canonicalPath = routeGuide?.path || routeTool?.path || path;
 
   document.title = title;
   setMeta("description", description);
   setMeta("keywords", keywords);
   setMeta("og:title", title, "property");
   setMeta("og:description", description, "property");
-  setMeta("og:type", "website", "property");
+  setMeta("og:type", routeGuide ? "article" : "website", "property");
   setMeta("og:url", `${siteUrl}${canonicalPath === "/" ? "" : canonicalPath}`, "property");
+  setMeta("og:site_name", "BuroCalcolo", "property");
+  setMeta("twitter:title", title);
+  setMeta("twitter:description", description);
   setMeta("twitter:card", "summary_large_image");
   setCanonical(canonicalPath);
+  const schemas = [];
   const appSchema = {
     "@type": routeTool ? "SoftwareApplication" : "WebSite",
     name: routeTool ? `${routeTool.name} - BuroCalcolo` : "BuroCalcolo",
@@ -656,10 +675,50 @@ function updateSeo(path, activeTool) {
       target: `${siteUrl}${canonicalPath === "/" ? "" : canonicalPath}`
     } : undefined
   };
-  const faqSchema = routeTool ? buildFaqJsonLd(routeTool.faqs) : path === "/" ? buildFaqJsonLd(buildGeneralFaqs()) : null;
+
+  if (routeGuide) {
+    schemas.push({
+      "@type": "Article",
+      headline: routeGuide.h1,
+      name: routeGuide.title,
+      description,
+      author: {
+        "@type": "Person",
+        name: routeGuide.author
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "BuroCalcolo",
+        url: siteUrl
+      },
+      datePublished: "2026-06-03",
+      dateModified: "2026-06-03",
+      mainEntityOfPage: `${siteUrl}${routeGuide.path}`,
+      articleSection: routeGuide.category,
+      keywords: routeGuide.keywords
+    });
+    schemas.push(buildFaqJsonLd(routeGuide.faqs));
+    schemas.push(buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Guide", path: "/guide" },
+      { name: routeGuide.title, path: routeGuide.path }
+    ]));
+  } else {
+    schemas.push(appSchema);
+    const faqSchema = routeTool ? buildFaqJsonLd(routeTool.faqs) : path === "/" ? buildFaqJsonLd(buildGeneralFaqs()) : null;
+    if (faqSchema) schemas.push(faqSchema);
+    if (routeTool) {
+      schemas.push(buildBreadcrumbJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Calcolatori", path: "/calcolatori/imu" },
+        { name: routeTool.name, path: routeTool.path }
+      ]));
+    }
+  }
+
   setStructuredData({
     "@context": "https://schema.org",
-    "@graph": faqSchema ? [appSchema, faqSchema] : [appSchema]
+    "@graph": schemas
   });
 }
 
@@ -880,6 +939,15 @@ function App() {
     return <ContactPage />;
   }
 
+  if (currentPath === "/guide") {
+    return <GuideIndexPage />;
+  }
+
+  const routeGuide = getGuideByPath(currentPath);
+  if (routeGuide) {
+    return <GuidePage guide={routeGuide} />;
+  }
+
   if (currentPath !== "/" && legalPages[currentPath]) {
     return <InfoPage page={legalPages[currentPath]} />;
   }
@@ -907,6 +975,7 @@ function App() {
             </div>
             <div className="hidden items-center gap-4 text-sm font-semibold text-ink/70 lg:flex">
               <a href="/calcolatori/imu">Calcolatori</a>
+              <a href="/guide">Guide</a>
               <a href="#report">Report</a>
               <a href="#ai">Assistente AI</a>
             </div>
@@ -1155,7 +1224,8 @@ function App() {
         </div>
       </section>
       {!isCalculatorPage && (
-        <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-5 lg:px-8">
+        <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-12 sm:px-5 lg:px-8">
+          <HomeGuidePreview />
           <FaqSection faqs={generalFaqs} title="FAQ sui calcolatori fiscali italiani" />
         </section>
       )}
@@ -1221,6 +1291,190 @@ function FaqSection({ faqs, title }) {
   );
 }
 
+function HomeGuidePreview() {
+  const featuredGuides = guides.slice(0, 6);
+
+  return (
+    <section className="rounded-[1.5rem] border border-ink/10 bg-white p-5 shadow-panel">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[.16em] text-basil">Approfondimenti</p>
+          <h2 className="mt-2 text-3xl font-black tracking-normal">Guide fiscali complete</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-ink/68">
+            BuroCalcolo non è solo un set di simulatori: ogni calcolatore è collegato a guide pratiche su norme, esempi, errori comuni, fonti ufficiali e controlli prima degli adempimenti.
+          </p>
+        </div>
+        <a href="/guide" className="rounded-full bg-ink px-5 py-3 font-black text-white">Tutte le guide</a>
+      </div>
+      <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {featuredGuides.map((guide) => (
+          <a key={guide.slug} href={guide.path} className="rounded-2xl bg-paper p-4 transition hover:bg-butter/60">
+            <p className="text-xs font-black uppercase tracking-[.14em] text-basil">{guide.category}</p>
+            <h3 className="mt-2 text-lg font-black leading-snug">{guide.title}</h3>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function GuideIndexPage() {
+  const categories = [...new Set(guides.map((guide) => guide.category))];
+
+  return (
+    <LegalShell>
+      <section className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-5 lg:px-8">
+        <p className="text-sm font-black uppercase tracking-[.16em] text-basil">Guide fiscali</p>
+        <h1 className="mt-3 max-w-4xl text-[clamp(2.7rem,7vw,5.8rem)] font-black leading-none tracking-normal">
+          Guide fiscali e previdenziali italiane 2026
+        </h1>
+        <p className="mt-5 max-w-3xl text-lg leading-8 text-ink/70">
+          Approfondimenti pratici su regime forfettario, IMU, INPS, TFR, busta paga, cedolare secca, F24 e detrazioni. Ogni guida collega spiegazione, esempio, FAQ, fonti ufficiali e calcolatori BuroCalcolo.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <a key={category} href={`#${category.toLowerCase().replaceAll(" ", "-")}`} className="rounded-full border border-ink/15 bg-white px-4 py-2 text-sm font-black">
+              {category}
+            </a>
+          ))}
+        </div>
+        <div className="mt-10 grid gap-8">
+          {categories.map((category) => (
+            <section key={category} id={category.toLowerCase().replaceAll(" ", "-")} className="scroll-mt-8">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[.14em] text-basil">{category}</p>
+                  <h2 className="text-3xl font-black">Guide {category}</h2>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {guides.filter((guide) => guide.category === category).map((guide) => (
+                  <a key={guide.slug} href={guide.path} className="group rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel transition hover:-translate-y-1">
+                    <p className="text-xs font-black uppercase tracking-[.14em] text-basil">{guide.readingTime}</p>
+                    <h3 className="mt-3 text-2xl font-black leading-tight">{guide.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-ink/62">{guide.excerpt}</p>
+                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-ink">
+                      Leggi la guida <ChevronRight size={16} />
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+    </LegalShell>
+  );
+}
+
+function GuidePage({ guide }) {
+  const relatedGuides = getRelatedGuides(guide);
+  const relatedCalculators = guide.calculatorIds.map((id) => calculatorRoutes.find((tool) => tool.id === id)).filter(Boolean);
+
+  return (
+    <LegalShell>
+      <article className="mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-6 sm:px-5 lg:grid-cols-[minmax(0,1fr)_330px] lg:px-8">
+        <div>
+          <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-2 text-sm font-bold text-ink/55">
+            <a href="/">Home</a>
+            <ChevronRight size={15} />
+            <a href="/guide">Guide</a>
+            <ChevronRight size={15} />
+            <span className="text-ink">{guide.category}</span>
+          </nav>
+          <p className="text-sm font-black uppercase tracking-[.16em] text-basil">{guide.category}</p>
+          <h1 className="mt-3 text-[clamp(2.6rem,7vw,5.8rem)] font-black leading-none tracking-normal">{guide.h1}</h1>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-ink/70">{guide.metaDescription}</p>
+          <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            <span className="rounded-full bg-ink px-4 py-2 font-black text-white">Autore: {guide.author}</span>
+            <span className="rounded-full border border-ink/15 bg-white px-4 py-2 font-bold text-ink/65">Aggiornato: {guide.updatedAt}</span>
+            <span className="rounded-full border border-ink/15 bg-white px-4 py-2 font-bold text-ink/65">{guide.readingTime}</span>
+          </div>
+
+          <section className="mt-8 grid gap-4">
+            {guide.introParagraphs.map((paragraph) => (
+              <p key={paragraph} className="text-lg leading-8 text-ink/72">{paragraph}</p>
+            ))}
+          </section>
+
+          <section className="mt-8 grid gap-5">
+            {guide.sections.map((section) => (
+              <article key={section.title} className="rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel">
+                <h2 className="text-3xl font-black">{section.title}</h2>
+                <div className="mt-4 grid gap-4">
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph} className="leading-8 text-ink/70">{paragraph}</p>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </section>
+
+          <section className="mt-5 rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel">
+            <h2 className="text-3xl font-black">Link al calcolatore</h2>
+            <p className="mt-3 leading-7 text-ink/68">
+              Dopo aver letto la guida, usa i calcolatori collegati per trasformare i dati in una stima ordinata. Il risultato resta orientativo, ma ti aiuta a preparare controlli, domande e documenti.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {relatedCalculators.map((tool) => (
+                <a key={tool.id} href={tool.path} className="rounded-full bg-ink px-4 py-2 text-sm font-black text-white">
+                  Calcolatore {tool.name}
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-5 rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel">
+            <h2 className="text-3xl font-black">Guide correlate</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {relatedGuides.map((item) => (
+                <a key={item.slug} href={item.path} className="rounded-2xl bg-paper p-4 font-black transition hover:bg-butter/60">
+                  {item.title}
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <FaqSection faqs={guide.faqs} title={`FAQ: ${guide.title}`} />
+        </div>
+
+        <aside className="grid h-fit gap-4 lg:sticky lg:top-4">
+          <div className="rounded-[1.35rem] border border-ink/10 bg-ink p-5 text-white shadow-panel">
+            <p className="text-sm font-black uppercase tracking-[.14em] text-butter">Ultimo aggiornamento</p>
+            <p className="mt-3 text-3xl font-black">{guide.updatedAt}</p>
+            <p className="mt-3 text-sm leading-6 text-white/65">
+              Contenuto informativo aggiornato per orientare la verifica su fonti ufficiali e calcolatori collegati.
+            </p>
+          </div>
+          <div className="rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel">
+            <p className="text-sm font-black uppercase tracking-[.14em] text-basil">Fonti utilizzate</p>
+            <div className="mt-4 grid gap-2">
+              {officialSourceLinks.map((source) => (
+                <a key={source.name} href={source.url} target="_blank" rel="noreferrer" className="rounded-2xl bg-paper px-4 py-3 text-sm font-bold text-ink/70">
+                  {source.name}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-[1.35rem] border border-ink/10 bg-white p-5 shadow-panel">
+            <p className="text-sm font-black uppercase tracking-[.14em] text-basil">Calcolatori</p>
+            <div className="mt-4 grid gap-2">
+              {relatedCalculators.map((tool) => (
+                <a key={tool.id} href={tool.path} className="rounded-full border border-ink/15 px-4 py-3 text-sm font-black">
+                  {tool.name}
+                </a>
+              ))}
+            </div>
+          </div>
+          <p className="rounded-2xl bg-white p-4 text-xs leading-5 text-ink/55 shadow-panel">
+            Disclaimer: questa guida non costituisce consulenza fiscale, previdenziale, legale o del lavoro. Prima di usare dati e risultati per adempimenti reali verifica fonti ufficiali e posizione personale.
+          </p>
+        </aside>
+      </article>
+    </LegalShell>
+  );
+}
+
 function SiteFooter() {
   return (
     <footer className="border-t border-ink/10 bg-ink text-white">
@@ -1250,6 +1504,7 @@ function SiteFooter() {
             <p className="text-sm font-black uppercase tracking-[.14em] text-butter">Pagine</p>
             <div className="mt-3 grid gap-2 text-sm text-white/70">
               <a href="/">Home</a>
+              <a href="/guide">Guide</a>
               <a href="/chi-siamo">Chi siamo</a>
               <a href="/contatti">Contatti</a>
             </div>
@@ -1305,6 +1560,9 @@ function LegalShell({ children }) {
         </a>
         <a href="/" className="inline-flex items-center gap-2 rounded-full border border-ink/15 bg-white px-4 py-2 text-sm font-bold">
           <Home size={17} /> Home
+        </a>
+        <a href="/guide" className="hidden rounded-full border border-ink/15 bg-white px-4 py-2 text-sm font-bold sm:inline-flex">
+          Guide
         </a>
       </nav>
       {children}
