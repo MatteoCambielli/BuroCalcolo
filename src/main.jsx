@@ -19,6 +19,7 @@ import {
   WalletCards,
   Zap
 } from "lucide-react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./styles.css";
 import { getGuideByPath, getRelatedGuides, guides, officialSourceLinks } from "./guideContent";
 
@@ -1807,6 +1808,6 @@ function ContactPage() {
 createRoot(document.getElementById("root")).render(
   <>
     <App />
-    <VercelSpeedInsights />
+    <SpeedInsights />
   </>
 );
